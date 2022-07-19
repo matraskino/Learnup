@@ -1,8 +1,8 @@
-package com.example.learnup
+package com.example.learnup.presentation
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.learnup.ui.main.MainFragment
+import com.example.learnup.R
 
 class MainActivity : AppCompatActivity() {
 
