@@ -1,6 +1,7 @@
 package com.example.learnup.data.api
 
 
+import android.util.Log
 import com.example.learnup.data.model.LearnResponse
 import com.example.learnup.domain.ItemLearn
 import com.google.gson.Gson
@@ -15,6 +16,7 @@ import java.util.concurrent.TimeUnit
 class ApiStorage {
 
     suspend fun getAllLearnItems(): List<ItemLearn> {
+        Log.d("test1","API Storage started")
         val urlOfServer = "https://script.google.com/macros/s/AKfycbwBFONX-b46MymX-p0LQxmd0MxdmJJVPrk8j3kxCRItPHRd91Ncp55zdr_RhpNEzs37/exec?action=getAllLines"
         val loggingInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
         val client = OkHttpClient.Builder().addInterceptor(loggingInterceptor).connectTimeout(25
@@ -38,14 +40,14 @@ class ApiStorage {
         val sType = object : TypeToken<List<LearnResponse>>() { }.type
 
 
-        val    learnList = gson.fromJson<List<LearnResponse>>(stringResponse,sType)
+        val learnList = gson.fromJson<List<LearnResponse>>(stringResponse,sType)
 
 //        }
          learnListMap= learnList.map { (
                 ItemLearn(it.id,it.word,it.description,it.isChecked,it.link,it.extraDescription)
         ) }
         println(learnListMap)
-
+        Log.d("test1","API Storage before return")
         return learnListMap!!
 
 

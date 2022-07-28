@@ -8,6 +8,7 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
+import android.util.Log
 import com.example.learnup.domain.ItemLearn
 
 
@@ -19,8 +20,6 @@ class DataBaseHandler(context: Context): SQLiteOpenHelper(context, DATABASE_NAME
         private const val DATABASE_NAME = "LearnItemsDatabase"
         private const val DATABASE_VERSION = 1
         private const val TABLE_LEARN_ITEMS = "LearnItemsTable"
-
-
         private const val KEY_ID = "_id"
         private const val KEY_WORD = "learnWord"
         private const val KEY_DEFINITION = "defenition"
@@ -28,11 +27,10 @@ class DataBaseHandler(context: Context): SQLiteOpenHelper(context, DATABASE_NAME
         private const val KEY_LINK = "link"
         private const val KEY_EXTRA_DESCRIPTION = "extraDescription"
 
-        //val id:Int, val learnWord:String, val definition:String, val toLearn:Boolean
-
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
+        Log.d("test1","Data Base on created started")
         val CREATE_LEARN_ITEMS_TABLE = ("CREATE TABLE $TABLE_LEARN_ITEMS " +
                 "($KEY_ID INTEGER PRIMARY KEY, $KEY_WORD TEXT, " +
                 "$KEY_DEFINITION TEXT, $KEY_TO_LEARN INTEGER, $KEY_LINK TEXT,$KEY_EXTRA_DESCRIPTION TEXT)")
@@ -44,6 +42,7 @@ class DataBaseHandler(context: Context): SQLiteOpenHelper(context, DATABASE_NAME
     }
 
     fun updateLearnTable(list:List<ItemLearn>){
+        Log.d("test1","Data Base updateLearnTable started")
         val db = this.writableDatabase
         db.execSQL("DELETE FROM $TABLE_LEARN_ITEMS")
         list.forEach {
@@ -62,6 +61,7 @@ class DataBaseHandler(context: Context): SQLiteOpenHelper(context, DATABASE_NAME
 
     @SuppressLint("Range")
     fun getAllLearnItems():List<ItemLearn>{
+        Log.d("test1","Data Base getAllLernItems started")
         var list = mutableListOf<ItemLearn>()
         val db = this.readableDatabase
         val selectQuery = "SELECT * FROM $TABLE_LEARN_ITEMS"
@@ -92,9 +92,8 @@ class DataBaseHandler(context: Context): SQLiteOpenHelper(context, DATABASE_NAME
                 list.add(ItemLearn(id,learnWord,definition,false,link,extraDescription))
             } while (cursor.moveToNext())
         }
+        Log.d("test1","Data Base getAllLearnItems before return")
         return list
-
     }
-
 }
 

@@ -9,21 +9,35 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.example.learnup.databinding.ItemViewBinding
 import com.example.learnup.domain.ItemLearn
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 
 class MyAdapter(private var vm: MainViewModel, private val owner:LifecycleOwner): RecyclerView.Adapter<MyAdapter.UserViewHolder>(), View.OnClickListener {
 
-        var dataToRecycl = vm.dataToRecycl.value!!
+        var dataToRecycl = vm.dataToRecyclStateFlow.value////dataToRecycl.value!!
     var onLearnItemClickListener:OnLearnItemClickListener? = null
 
     init {
-        vm.dataToRecycl.observe(owner, Observer {
-            updateList(it)
-        })
+//        vm.dataToRecycl.observe(owner, Observer {
+//            //updateList(it)
+//        })
+//    updateData()
 
     }
 
+    fun updateData(){
+        GlobalScope.launch {
+            vm.dataToRecyclStateFlow.collectLatest {
+                dataToRecycl = it
+            }
+            notifyDataSetChanged()
+        }
+    }
+
     class UserViewHolder(val itemBinding: ItemViewBinding): RecyclerView.ViewHolder(itemBinding.root){
+
         fun bind(){
 
         }

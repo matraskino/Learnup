@@ -1,79 +1,57 @@
 package com.example.learnup.presentation
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.learnup.domain.GetAllLearnItemsUseCase
+import com.example.learnup.domain.GetLearnItemByIdUseCase
 import com.example.learnup.domain.ItemLearn
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.*
 
 
 class MainViewModel(
 
-    private val getAllLearnItemsUseCase: GetAllLearnItemsUseCase
-): ViewModel () {
-/*
-    */
-
+    private val getAllLearnItemsUseCase: GetAllLearnItemsUseCase,
+    private val getLearnItemByIdUseCase: GetLearnItemByIdUseCase
+) : ViewModel() {
 
     var dataToRecycl = MutableLiveData<List<ItemLearn>>()
+    var dataToRecyclStateFlow = MutableStateFlow(listOf(ItemLearn()))
 
+    init {
+        testFillLiveData()
+    }
 
-
-
-
-    fun fillArr(){
-//        dataToRecycl.value = mutableListOf(ItemLearn(1,"test from fill arr", "defenition",false),ItemLearn(1,"test from fill arr", "defenition",false))
+    fun fillArr() {
         viewModelScope.launch {
 
-            val newData:Flow<List<ItemLearn>> =
-                withContext(Dispatchers.IO){
-
-                getAllLearnItemsUseCase.execute()
+            dataToRecyclStateFlow =
+                withContext(Dispatchers.IO) {
+                    getAllLearnItemsUseCase.execute()
                 }
-            newData.collect{
 
-            withContext(Dispatchers.Main){
-                println(it.toString())
-                dataToRecycl.postValue(it)
+
+            dataToRecyclStateFlow.collectLatest {
+                withContext(Dispatchers.Main) {
+                    dataToRecycl.postValue(it)
+                }
             }
-            }
-//        runBlocking {
-//            withContext(Dispatchers.IO){
-//
-//            }
-//            val deferred: Deferred<List<ItemLearn>> = async {
-//                getAllLearnItemsUseCase.execute()
-//            }
-//            println("waiting...")
-//
-//
-//                val dataReq = deferred.await()
-//            withContext(Dispatchers.Main) {
-//                dataToRecycl.value = dataReq
-//                println(dataReq)
- //           }
         }
-
     }
 
-    fun testFillLiveData(){
-        dataToRecycl.value = mutableListOf(ItemLearn(1,"test","test2",false, "google.com.ua", "extra description about nothing"),
-            ItemLearn(1,"test","test2",false,"google.com","test additional decrtiption"))
+    fun testFillLiveData() {
+        dataToRecycl.value = mutableListOf(
+            ItemLearn(
+                1,
+                "test",
+                "test2",
+                false,
+                "google.com.ua",
+                "extra description about nothing"
+            ),
+            ItemLearn(1, "test", "test2", false, "google.com", "test additional decrtiption")
+        )
     }
-
-
-
-    fun fillLiveData(list:List<ItemLearn>){
-
-        dataToRecycl.value = list
-
-    }
-
-
-
-
-
-
 }

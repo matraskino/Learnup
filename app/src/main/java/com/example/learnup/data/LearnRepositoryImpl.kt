@@ -5,47 +5,62 @@ package com.example.learnup.data
 
 import android.content.Context
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import com.example.learnup.data.api.ApiStorage
 import com.example.learnup.data.local.DataBaseHandler
 import com.example.learnup.domain.ItemLearn
 import com.example.learnup.domain.ItemLearnToAdd
 import com.example.learnup.domain.LearnRepository
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.*
 
 
 class LearnRepositoryImpl(context: Context):LearnRepository{
-    val db:DataBaseHandler
 
-    lateinit var allLearnItems:Flow<List<ItemLearn>>
+
+    val db:DataBaseHandler
+    var mutableStateFlow: MutableStateFlow<List<ItemLearn>> = MutableStateFlow(listOf<ItemLearn>(
+        ItemLearn()
+    ))
 
     init {
         db = DataBaseHandler(context)
+        GlobalScope.launch {
+            updateFromApi()
+        }
     }
 
+    override suspend fun getAllLearnItems(): MutableStateFlow<List<ItemLearn>> {
+        mutableStateFlow.value = db.getAllLearnItems()
+        return mutableStateFlow
+        }
 
-    override suspend fun getAllLearnItems(): Flow<List<ItemLearn>> {
-        var list = db.getAllLearnItems()
-        allLearnItems = flow{
-            emit(list)
-            try{
-                val apiList = GlobalScope.async {
-                    ApiStorage().getAllLearnItems()
-                }.await()
+    suspend fun updateFromApi(){
+        Log.d("test1","updateFromApi started ")
+        try{
+            GlobalScope.async {
+                val apiList = ApiStorage().getAllLearnItems()
+
+                mutableStateFlow.value = apiList
                 db.updateLearnTable(apiList)
-                emit(apiList)
+                mutableStateFlow.value = apiList
+                Log.d("test1","updateFromApi started inside async")
+            }
 
 
-            }catch (e:Exception){
-            Log.d("test","exeption дивись сюди $e")}
-        }
-        return allLearnItems
-        }
+        }catch (e:Exception){
+            Log.d("test1","exeption дивись сюди $e")}
+    }
 
     override suspend fun getLearnItemById(id: Int): ItemLearn {
-        TODO("Not yet implemented")
+        Log.d("test1", "getLearnItemById ${ id.toString() }")
+        val item = mutableStateFlow.value.first {
+            it.id == id
+        }
+
+        return item
     }
+
 
     override fun updateLearnItem(item: ItemLearn) {
         TODO("Not yet implemented")
@@ -58,10 +73,10 @@ class LearnRepositoryImpl(context: Context):LearnRepository{
     companion object{
 
         private var mInstance:LearnRepositoryImpl? = null
-
         fun getInstance(context: Context): LearnRepositoryImpl {
             if (mInstance == null){
                 mInstance = LearnRepositoryImpl(context)
+
             }
             return mInstance!!
         }

@@ -1,3 +1,3 @@
 package com.example.learnup.domain
 
-data class ItemLearn(val id:Int, val learnWord:String, val definition:String, val toLearn:Boolean, val link:String, val extraDescription:String)
+data class ItemLearn(val id:Int=0, val learnWord:String="default word", val definition:String="defaul description", val toLearn:Boolean=false, val link:String="www.default.com", val extraDescription:String=" default extra data bout dord")
