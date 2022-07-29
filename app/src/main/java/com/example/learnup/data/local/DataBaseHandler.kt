@@ -1,7 +1,6 @@
 package com.example.learnup.data.local
 
 import android.annotation.SuppressLint
-import android.app.Application
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
@@ -49,8 +48,8 @@ class DataBaseHandler(context: Context): SQLiteOpenHelper(context, DATABASE_NAME
             val contentValues = ContentValues()
             contentValues.put(KEY_WORD, it.learnWord)
             contentValues.put(KEY_ID, it.id)
-            contentValues.put(KEY_DEFINITION, it.definition)
-            contentValues.put(KEY_TO_LEARN, it.toLearn)
+            contentValues.put(KEY_DEFINITION, it.description)
+            contentValues.put(KEY_TO_LEARN, it.isChecked)
             contentValues.put(KEY_LINK, it.link)
             contentValues.put(KEY_EXTRA_DESCRIPTION, it.extraDescription)
             db.insert(TABLE_LEARN_ITEMS,null, contentValues)

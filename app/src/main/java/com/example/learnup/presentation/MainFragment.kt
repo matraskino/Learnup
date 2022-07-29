@@ -1,5 +1,6 @@
 package com.example.learnup.presentation
 
+import android.app.Application
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.util.Log
@@ -14,13 +15,13 @@ import com.example.learnup.data.LearnRepositoryImpl
 import com.example.learnup.databinding.MainFragmentBinding
 import com.example.learnup.domain.ItemLearn
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class MainFragment : Fragment() {
 
     lateinit var binding: MainFragmentBinding
     private lateinit var vm: MainViewModel
+    private lateinit var application:Application
 
     companion object {
         fun newInstance() = MainFragment()
@@ -34,9 +35,11 @@ class MainFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        application = requireActivity().application
+
         vm = ViewModelProvider(
             this,
-            MainViewModelFactory(requireContext())
+            MainViewModelFactory(application)
         ).get(MainViewModel::class.java)
         observeAllWords()
         binding = MainFragmentBinding.inflate(inflater)
@@ -50,7 +53,7 @@ class MainFragment : Fragment() {
                 Toast.makeText(requireContext(), learnItem.learnWord, Toast.LENGTH_LONG).show()
                 val bun = Bundle()
                 bun.putString("learnWord", learnItem.learnWord)
-                bun.putString("definition", learnItem.definition)
+                bun.putString("definition", learnItem.description)
                 bun.putString("extraDescription", learnItem.extraDescription)
                 bun.putInt("id", learnItem.id)
                 val newFragment = LearnItemFragment.getFragmentInstance(bun)
@@ -60,6 +63,7 @@ class MainFragment : Fragment() {
                         R.id.container, newFragment
                     ).commit()
 
+
             }
 
         }
@@ -67,7 +71,7 @@ class MainFragment : Fragment() {
         binding.button.setOnClickListener {
             GlobalScope.launch {
 
-                LearnRepositoryImpl.getInstance(requireContext()).updateFromApi()
+                LearnRepositoryImpl.getInstance(application).updateFromApi()
             }
             //vm.fillArr()
 //            vm.testRep()

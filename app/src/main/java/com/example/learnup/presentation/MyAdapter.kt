@@ -1,11 +1,9 @@
 package com.example.learnup.presentation
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.example.learnup.databinding.ItemViewBinding
 import com.example.learnup.domain.ItemLearn
@@ -55,8 +53,8 @@ class MyAdapter(private var vm: MainViewModel, private val owner:LifecycleOwner)
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
         val currentItemLearn: ItemLearn = dataToRecycl[position]
         holder.itemBinding.firstText.text = currentItemLearn.learnWord
-        holder.itemBinding.defenitionTextView.text = currentItemLearn.definition
-        holder.itemBinding.showDef.isChecked = currentItemLearn.toLearn
+        holder.itemBinding.defenitionTextView.text = currentItemLearn.description
+        holder.itemBinding.showDef.isChecked = currentItemLearn.isChecked
         holder.itemView.setOnClickListener {
             onLearnItemClickListener?.onLearnItemClicked(currentItemLearn)
 

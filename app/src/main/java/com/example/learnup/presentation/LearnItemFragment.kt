@@ -6,8 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import com.example.learnup.R
 import com.example.learnup.databinding.ItemFullFragmentBinding
 
 class LearnItemFragment:Fragment() {
@@ -23,10 +21,10 @@ class LearnItemFragment:Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        vm = LearnItemVMFactory(requireContext()).create(LearnItemViewModel::class.java)
+        vm = LearnItemVMFactory(requireActivity().application).create(LearnItemViewModel::class.java)
 
         vm.itemView.observe(viewLifecycleOwner){
-            binding.tvDescription.text = it.definition
+            binding.tvDescription.text = it.description
         }
         vm.getLearnItem(requireArguments().getInt("id"))
         binding = ItemFullFragmentBinding.inflate(inflater,container,false)
@@ -44,7 +42,7 @@ class LearnItemFragment:Fragment() {
         vm.itemView.observe(viewLifecycleOwner){
             binding.tvExtraDescription.text = it.extraDescription
             binding.tvLearnWord.text = it.learnWord
-            binding.tvDescription.text = it.definition
+            binding.tvDescription.text = it.description
             binding.tvLink.text = it.link
 
         }
