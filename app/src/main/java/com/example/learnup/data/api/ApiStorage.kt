@@ -19,7 +19,7 @@ class ApiStorage {
         Log.d("test1","API Storage started")
         val urlOfServer = "https://script.google.com/macros/s/AKfycbwBFONX-b46MymX-p0LQxmd0MxdmJJVPrk8j3kxCRItPHRd91Ncp55zdr_RhpNEzs37/exec?action=getAllLines"
         val loggingInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
-        val client = OkHttpClient.Builder().addInterceptor(loggingInterceptor).connectTimeout(25
+        val client = OkHttpClient.Builder()/*.addInterceptor(loggingInterceptor)*/.connectTimeout(25
             , TimeUnit.SECONDS).build()
         val gson = Gson()
         val request = Request

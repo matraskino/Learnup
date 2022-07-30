@@ -4,11 +4,9 @@ package com.example.learnup.data
 
 
 import android.app.Application
-import android.content.Context
 import android.util.Log
 import com.example.learnup.data.api.ApiStorage
 import com.example.learnup.data.local.AppDataBase
-import com.example.learnup.data.local.DataBaseHandler
 import com.example.learnup.data.model.LearnItemData
 import com.example.learnup.domain.ItemLearn
 import com.example.learnup.domain.ItemLearnToAdd
