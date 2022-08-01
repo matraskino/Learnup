@@ -8,7 +8,5 @@ interface LearnRepository {
 
     suspend fun getLearnItemById(id:Int):ItemLearn
 
-    fun updateLearnItem(item:ItemLearn)
-
-    fun addLearnItem(item:ItemLearnToAdd)
+    fun saveLearnItem(item:ItemLearn)
 }

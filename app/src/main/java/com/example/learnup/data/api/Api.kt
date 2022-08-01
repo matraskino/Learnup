@@ -17,7 +17,6 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import java.security.cert.CertificateFactory
-import java.util.*
 import java.util.concurrent.TimeUnit
 
 
@@ -26,7 +25,7 @@ interface Api {
     suspend fun test(@Body body: LearnItemData):String
 
     @GET("exec?action=getAllLines")//saveLearnItem")
-    suspend fun testGet()
+    suspend fun testGet():List<LearnItemData>
 
 }
 

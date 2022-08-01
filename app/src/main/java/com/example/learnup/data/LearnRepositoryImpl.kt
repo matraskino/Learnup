@@ -71,13 +71,9 @@ class LearnRepositoryImpl(application: Application):LearnRepository{
         return item
     }
 
-
-    override fun updateLearnItem(item: ItemLearn) {
+    override fun saveLearnItem(item: ItemLearn) {
         TODO("Not yet implemented")
-    }
-
-    override fun addLearnItem(item: ItemLearnToAdd) {
-        TODO("Not yet implemented")
+        Log.d("test1","will add $item")
     }
 
     companion object{
