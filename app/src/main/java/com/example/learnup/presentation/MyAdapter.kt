@@ -16,6 +16,7 @@ class MyAdapter(private var vm: MainViewModel, private val owner:LifecycleOwner)
 
         var dataToRecycl = vm.dataToRecyclStateFlow.value////dataToRecycl.value!!
     var onLearnItemClickListener:OnLearnItemClickListener? = null
+    var onLearnItemLongClickListener:OnLearnItemLongClickListener? = null
 
     init {
 //        vm.dataToRecycl.observe(owner, Observer {
@@ -57,6 +58,10 @@ class MyAdapter(private var vm: MainViewModel, private val owner:LifecycleOwner)
         holder.itemBinding.showDef.isChecked = currentItemLearn.isChecked
         holder.itemView.setOnClickListener {
             onLearnItemClickListener?.onLearnItemClicked(currentItemLearn)
+        }
+
+        holder.itemView.setOnLongClickListener {
+            onLearnItemLongClickListener?.onLearnItemLongClicked(currentItemLearn) ?: false
 
         }
 
@@ -81,6 +86,9 @@ class MyAdapter(private var vm: MainViewModel, private val owner:LifecycleOwner)
 
     interface OnLearnItemClickListener{
         fun onLearnItemClicked(learnItem:ItemLearn)
+    }
+    interface OnLearnItemLongClickListener{
+        fun onLearnItemLongClicked(learnItem:ItemLearn):Boolean
     }
 
 }

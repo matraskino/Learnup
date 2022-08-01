@@ -14,6 +14,7 @@ import com.example.learnup.R
 import com.example.learnup.data.LearnRepositoryImpl
 import com.example.learnup.databinding.MainFragmentBinding
 import com.example.learnup.domain.ItemLearn
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -57,13 +58,15 @@ class MainFragment : Fragment() {
                 bun.putString("extraDescription", learnItem.extraDescription)
                 bun.putInt("id", learnItem.id)
                 val newFragment = LearnItemFragment.getFragmentInstance(bun)
-
-                this@MainFragment.parentFragmentManager.beginTransaction().addToBackStack("test")
-                    .replace(
-                        R.id.container, newFragment
-                    ).commit()
-
-
+                launchFragment(newFragment)
+            }
+        }
+        adapter.onLearnItemLongClickListener = object : MyAdapter.OnLearnItemLongClickListener{
+            override fun onLearnItemLongClicked(learnItem: ItemLearn):Boolean {
+                val bun = Bundle()
+                bun.putInt("id", learnItem.id)
+                launchFragment(EditLearnItemFragment.getFragmentInstance(bun))
+                return true
             }
 
         }
@@ -80,10 +83,26 @@ class MainFragment : Fragment() {
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val buttonAddItem = binding.buttonAddShopItem
+        buttonAddItem.setOnClickListener {
+            val bun = Bundle()
+            bun.putInt("id", 0)
+            launchFragment(EditLearnItemFragment.getFragmentInstance(bun))
+        }
+
+    }
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         // TODO: Use the ViewModel
+    }
+    private fun launchFragment(fragment:Fragment){
+        this@MainFragment.parentFragmentManager.beginTransaction().addToBackStack("test")
+            .replace(
+                R.id.container, fragment
+            ).commit()
     }
 
     fun observeAllWords() {
