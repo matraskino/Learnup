@@ -5,11 +5,10 @@ package com.example.learnup.data
 
 import android.app.Application
 import android.util.Log
-import com.example.learnup.data.api.ApiStorage
+import com.example.learnup.data.api.ApiBuilder
 import com.example.learnup.data.local.AppDataBase
 import com.example.learnup.data.model.LearnItemData
 import com.example.learnup.domain.ItemLearn
-import com.example.learnup.domain.ItemLearnToAdd
 import com.example.learnup.domain.LearnRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -22,6 +21,7 @@ class LearnRepositoryImpl(application: Application):LearnRepository{
     var mutableStateFlow: MutableStateFlow<List<ItemLearn>> = MutableStateFlow(listOf<ItemLearn>(
         ItemLearn()
     ))
+    val api = ApiBuilder().build()
 
     init {
 //        db = DataBaseHandler(application)
@@ -32,6 +32,7 @@ class LearnRepositoryImpl(application: Application):LearnRepository{
 
     override suspend fun getAllLearnItems(): MutableStateFlow<List<ItemLearn>> {
         mutableStateFlow.value = db.getAllLearnItems().map { Mapper().LearnItemToDomain(it) }
+        updateFromApi()
         return mutableStateFlow
         }
 
@@ -49,8 +50,7 @@ class LearnRepositoryImpl(application: Application):LearnRepository{
         Log.d("test1","updateFromApi started ")
         try{
             GlobalScope.async {
-                val apiList = ApiStorage().getAllLearnItems()
-
+                val apiList = api.getAllLines()//ApiStorage().getAllLearnItems()
 //                mutableStateFlow.value = apiList
                 replaceAllInDb(apiList)
                 mutableStateFlow.value = apiList.map { Mapper().LearnItemToDomain(it) }
@@ -82,18 +82,10 @@ class LearnRepositoryImpl(application: Application):LearnRepository{
         fun getInstance(application: Application): LearnRepositoryImpl {
             if (mInstance == null){
                 mInstance = LearnRepositoryImpl(application)
-
             }
             return mInstance!!
         }
-
-
     }
-
-
-
-
-
 }
 
 

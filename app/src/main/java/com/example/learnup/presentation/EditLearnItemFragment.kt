@@ -22,8 +22,10 @@ class EditLearnItemFragment:Fragment() {
         var id = requireArguments().getInt("id")
         if(id !=0 ){ vm.getLearnItem(id) }
         binding = EditLearnItemBinding.inflate(inflater,container,false)
-        binding.testTextView.text = vm.itemView.value?.learnWord
         binding.etLearnWord.setText(vm.itemView.value?.learnWord)
+        binding.etDescription.setText(vm.itemView.value?.description)
+        binding.etLink.setText(vm.itemView.value?.link)
+        binding.etExtraDescription.setText(vm.itemView.value?.extraDescription)
 
         return binding.root
     }
