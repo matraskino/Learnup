@@ -2,7 +2,7 @@ package com.example.learnup.domain
 
 
 import android.util.Log
-import kotlinx.coroutines.flow.Flow
+import com.example.learnup.domain.models.ItemLearn
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class GetAllLearnItemsUseCase(private val learnRepository: LearnRepository) {

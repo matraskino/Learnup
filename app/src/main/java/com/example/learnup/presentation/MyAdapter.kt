@@ -4,9 +4,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.RecyclerView
 import com.example.learnup.databinding.ItemViewBinding
-import com.example.learnup.domain.ItemLearn
+import com.example.learnup.domain.models.AppSettings
+import com.example.learnup.domain.models.ItemLearn
 import com.example.learnup.presentation.viewModels.MainViewModel
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.collectLatest
@@ -15,17 +17,12 @@ import kotlinx.coroutines.launch
 
 class MyAdapter(private var vm: MainViewModel, private val owner:LifecycleOwner): RecyclerView.Adapter<MyAdapter.UserViewHolder>(), View.OnClickListener {
 
-    var dataToRecycl = vm.dataToRecyclStateFlow.value////dataToRecycl.value!!
+    var dataToRecycl = vm.dataToRecycl.value!!
     var onLearnItemClickListener:OnLearnItemClickListener? = null
     var onLearnItemLongClickListener:OnLearnItemLongClickListener? = null
+    var settings = vm.settings
 
-    init {
-//        vm.dataToRecycl.observe(owner, Observer {
-//            //updateList(it)
-//        })
-//    updateData()
 
-    }
 
     fun updateData(){
         GlobalScope.launch {
@@ -53,15 +50,28 @@ class MyAdapter(private var vm: MainViewModel, private val owner:LifecycleOwner)
 
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
         val currentItemLearn: ItemLearn = dataToRecycl[position]
-        holder.itemBinding.firstText.text = currentItemLearn.learnWord
-        holder.itemBinding.defenitionTextView.text = currentItemLearn.description
+        var word = when (settings.value.wayOfLearn){
+            AppSettings.SHOW_DESCRIPTION -> currentItemLearn.description
+            else -> currentItemLearn.learnWord
+        }
+        var description = when (settings.value.wayOfLearn){
+            AppSettings.SHOW_DESCRIPTION -> currentItemLearn.learnWord
+            else -> currentItemLearn.learnWord
+        }
+        holder.itemBinding.firstText.text = word
+        holder.itemBinding.defenitionTextView.text = description
         holder.itemBinding.showDef.isChecked = currentItemLearn.isChecked
         holder.itemView.setOnClickListener {
             onLearnItemClickListener?.onLearnItemClicked(currentItemLearn)
         }
+        holder.itemBinding.defenitionTextView.visibility = when (settings.value.wayOfLearn){
+            AppSettings.SHOW_ALL -> View.VISIBLE
+            else -> View.INVISIBLE
+        }
 
         holder.itemView.setOnLongClickListener {
-            onLearnItemLongClickListener?.onLearnItemLongClicked(currentItemLearn) ?: false
+            false
+//            onLearnItemLongClickListener?.onLearnItemLongClicked(currentItemLearn) ?: false
         }
 
     }
@@ -69,6 +79,15 @@ class MyAdapter(private var vm: MainViewModel, private val owner:LifecycleOwner)
     override fun getItemCount(): Int {
        return dataToRecycl.size
     }
+
+    fun observeSettings(){
+        vm.viewModelScope.launch {
+            settings.collectLatest {
+                notifyDataSetChanged()
+            }
+        }
+    }
+
 
     override fun onClick(p0: View?) {
 
@@ -82,10 +101,10 @@ class MyAdapter(private var vm: MainViewModel, private val owner:LifecycleOwner)
     }
 
     interface OnLearnItemClickListener{
-        fun onLearnItemClicked(learnItem:ItemLearn)
+        fun onLearnItemClicked(learnItem: ItemLearn)
     }
     interface OnLearnItemLongClickListener{
-        fun onLearnItemLongClicked(learnItem:ItemLearn):Boolean
+        fun onLearnItemLongClicked(learnItem: ItemLearn):Boolean
     }
 
 }

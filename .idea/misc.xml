@@ -6,10 +6,12 @@
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.335" />
         <entry key="app/src/main/res/layout/edit_learn_item.xml" value="0.29554138183593753" />
         <entry key="app/src/main/res/layout/item_full_fragment.xml" value="0.23854166666666668" />
-        <entry key="app/src/main/res/layout/item_view.xml" value="0.2526041666666667" />
+        <entry key="app/src/main/res/layout/item_view.xml" value="0.3091349283854167" />
         <entry key="app/src/main/res/layout/main_activity.xml" value="0.2526041666666667" />
         <entry key="app/src/main/res/layout/main_fragment.xml" value="0.2526041666666667" />
-        <entry key="app/src/main/res/layout/test.xml" value="0.1171875" />
+        <entry key="app/src/main/res/layout/switch_item.xml" value="0.1078125" />
+        <entry key="app/src/main/res/layout/test.xml" value="0.30381622314453127" />
+        <entry key="app/src/main/res/menu/menu_main.xml" value="0.20107727050781252" />
         <entry key="app/src/main/res/xml/network_security_config.xml" value="0.1078125" />
       </map>
     </option>

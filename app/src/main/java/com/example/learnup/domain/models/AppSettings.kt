@@ -1,4 +1,4 @@
-package com.example.learnup.domain
+package com.example.learnup.domain.models
 
 
 class AppSettings(

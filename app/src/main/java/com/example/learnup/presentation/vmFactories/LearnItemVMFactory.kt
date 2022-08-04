@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.learnup.data.LearnRepositoryImpl
+import com.example.learnup.domain.AppSettingsHolder
 import com.example.learnup.domain.GetAllLearnItemsUseCase
 import com.example.learnup.domain.GetLearnItemByIdUseCase
 import com.example.learnup.domain.GetLearnItemIdUseCase
@@ -23,8 +24,12 @@ class LearnItemVMFactory(application: Application):ViewModelProvider.Factory {
         GetLearnItemIdUseCase(repository)
     }
 
+    private val appSettingsHolder  by lazy(LazyThreadSafetyMode.NONE) {
+        AppSettingsHolder(repository)
+    }
+
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return LearnItemViewModel(getAllLearnItemsUseCase,getLearnItemByIdUseCase,getLearnItemIdUseCase) as T
+        return LearnItemViewModel(getAllLearnItemsUseCase,getLearnItemByIdUseCase,getLearnItemIdUseCase,appSettingsHolder) as T
     }
 }

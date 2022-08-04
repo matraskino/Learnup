@@ -4,29 +4,31 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.learnup.domain.AppSettingsHolder
 import com.example.learnup.domain.GetAllLearnItemsUseCase
 import com.example.learnup.domain.GetLearnItemByIdUseCase
 import com.example.learnup.domain.GetLearnItemIdUseCase
-import com.example.learnup.domain.ItemLearn
+import com.example.learnup.domain.models.ItemLearn
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class LearnItemViewModel(
     private val getAllLearnItemsUseCase:GetAllLearnItemsUseCase,
     private val getLearnItemByIdUseCase:GetLearnItemByIdUseCase,
-    private val getLearnItemIdUseCase:GetLearnItemIdUseCase
+    private val getLearnItemIdUseCase:GetLearnItemIdUseCase,
+    private val appSettingsHolder: AppSettingsHolder
     ):ViewModel() {
     private val _itemView = MutableLiveData<ItemLearn>()
     var prevId:MutableList<Int> = mutableListOf()
     val DEFAULT_ID = 1
+    val settings = appSettingsHolder.getAppSettings()
     val itemView:LiveData<ItemLearn>
         get() = _itemView
 
     fun getLearnItem(id:Int){
         viewModelScope.launch {
-            val item:ItemLearn = getLearnItemByIdUseCase.execute(id)
+            val item: ItemLearn = getLearnItemByIdUseCase.execute(id)
 
             withContext(Dispatchers.Main){
                 _itemView.value = item

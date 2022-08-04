@@ -4,16 +4,15 @@ import android.app.Application
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.util.Log
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.learnup.R
 import com.example.learnup.data.LearnRepositoryImpl
 import com.example.learnup.databinding.MainFragmentBinding
-import com.example.learnup.domain.ItemLearn
+import com.example.learnup.domain.models.AppSettings
+import com.example.learnup.domain.models.ItemLearn
 import com.example.learnup.presentation.vmFactories.MainViewModelFactory
 import com.example.learnup.presentation.MyAdapter
 import com.example.learnup.presentation.viewModels.MainViewModel
@@ -65,9 +64,7 @@ class MainFragment : Fragment() {
         }
         adapter.onLearnItemLongClickListener = object : MyAdapter.OnLearnItemLongClickListener {
             override fun onLearnItemLongClicked(learnItem: ItemLearn):Boolean {
-                val bun = Bundle()
-                bun.putInt("id", learnItem.id)
-                launchFragment(EditLearnItemFragment.getFragmentInstance(bun))
+
                 return true
             }
 
@@ -88,6 +85,7 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val buttonAddItem = binding.buttonAddShopItem
+        vm.observSettings()
         buttonAddItem.setOnClickListener {
             val bun = Bundle()
             bun.putInt("id", 0)
@@ -112,15 +110,18 @@ class MainFragment : Fragment() {
         vm.dataToRecycl.observe(viewLifecycleOwner) {
             adapter.updateList(it)
         }
-
-//            vm.dataToRecyclStateFlow.collectLatest {
-//                println("inside mainFragment obsorver of StateFlow 992345678987654323456789098765432123456789098765432")
-//                Log.d("test1", "inside mainFragment obsorver of StateFlow 992345678987654323456789098765432123456789098765432")
-//
-//                    //                adapter.updateList(it)
-//
-//            }
-
     }
+
+//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+//        super.onCreateOptionsMenu(menu, inflater)
+//        inflater.inflate(R.menu.menu_main, menu)
+//    }
+
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        vm.onSettingsChanged(item)
+//        return super.onOptionsItemSelected(item)
+//    }
+
+
 
 }

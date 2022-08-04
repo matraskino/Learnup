@@ -1,16 +1,17 @@
 package com.example.learnup.domain
 
-import kotlinx.coroutines.flow.Flow
+import com.example.learnup.domain.models.AppSettings
+import com.example.learnup.domain.models.ItemLearn
 import kotlinx.coroutines.flow.MutableStateFlow
 
 interface LearnRepository {
     suspend fun getAllLearnItems(): MutableStateFlow<MutableList<ItemLearn>>
 
-    suspend fun getLearnItemById(id:Int):ItemLearn
+    suspend fun getLearnItemById(id:Int): ItemLearn
 
-    suspend fun saveLearnItem(item:ItemLearn)
+    suspend fun saveLearnItem(item: ItemLearn)
 
     fun saveAppSettings(settings: AppSettings)
 
-    fun getAppSettings():AppSettings
+    fun getAppSettings(): MutableStateFlow<AppSettings>
 }

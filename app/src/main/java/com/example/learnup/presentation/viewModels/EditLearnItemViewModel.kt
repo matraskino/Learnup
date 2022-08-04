@@ -5,13 +5,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.learnup.domain.GetAllLearnItemsUseCase
 import com.example.learnup.domain.GetLearnItemByIdUseCase
-import com.example.learnup.domain.ItemLearn
+import com.example.learnup.domain.models.ItemLearn
 import com.example.learnup.domain.SaveLearnItemUseCase
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -24,7 +22,7 @@ class EditLearnItemViewModel(
 
     fun getLearnItem(id:Int){
         viewModelScope.launch {
-            val item:ItemLearn = getLearnItemByIdUseCase.execute(id)
+            val item: ItemLearn = getLearnItemByIdUseCase.execute(id)
 
             withContext(Dispatchers.Main){
                 _itemView.value = item

@@ -5,12 +5,11 @@ package com.example.learnup.data
 
 import android.app.Application
 import android.util.Log
-import androidx.core.content.edit
 import com.example.learnup.data.api.ApiBuilder
 import com.example.learnup.data.local.AppDataBase
 import com.example.learnup.data.model.LearnItemData
-import com.example.learnup.domain.AppSettings
-import com.example.learnup.domain.ItemLearn
+import com.example.learnup.domain.models.AppSettings
+import com.example.learnup.domain.models.ItemLearn
 import com.example.learnup.domain.LearnRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -26,6 +25,7 @@ class LearnRepositoryImpl(val application: Application):LearnRepository{
     var mutableStateFlow: MutableStateFlow<MutableList<ItemLearn>> = MutableStateFlow(mutableListOf<ItemLearn>(
         ItemLearn()
     ))
+    var settingsStateFlow:MutableStateFlow<AppSettings> = MutableStateFlow(getCurrentSettings())
 
     val api = ApiBuilder().build()
 
@@ -89,13 +89,22 @@ class LearnRepositoryImpl(val application: Application):LearnRepository{
         val shar = application.getSharedPreferences(SHARED_PREF_SETTINGS,MODE_PRIVATE)
         shar.edit().putInt(WAY_LEARN, settings.wayOfLearn).commit()
         shar.edit().putBoolean(FILTERED, settings.wordsFilter).commit()
+        Log.d("test1", "saveAppSettings")
+        settingsStateFlow.value = settings
     }
 
-    override fun getAppSettings(): AppSettings {
+    private fun getCurrentSettings(): AppSettings{
+
+        Log.d("test1", "get new APP SETTINGS")
         val shar = application.getSharedPreferences(SHARED_PREF_SETTINGS,MODE_PRIVATE)
         val wayOfLearn = shar.getInt(WAY_LEARN, AppSettings.SHOW_ALL)
-        val wordsFilter = shar.getBoolean(FILTERED,false)
+        val wordsFilter = shar.getBoolean(FILTERED,true)
         return AppSettings(wayOfLearn = wayOfLearn, wordsFilter = wordsFilter)
+    }
+
+    override fun getAppSettings(): MutableStateFlow<AppSettings> {
+        settingsStateFlow.value = getCurrentSettings()
+        return settingsStateFlow
     }
 
     suspend fun synhronise(){

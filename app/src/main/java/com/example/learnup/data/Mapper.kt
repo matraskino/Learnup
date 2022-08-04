@@ -1,10 +1,10 @@
 package com.example.learnup.data
 
 import com.example.learnup.data.model.LearnItemData
-import com.example.learnup.domain.ItemLearn
+import com.example.learnup.domain.models.ItemLearn
 
 class Mapper {
-    fun LearnItemToData(learnItem:ItemLearn): LearnItemData {
+    fun LearnItemToData(learnItem: ItemLearn): LearnItemData {
         return LearnItemData(
             id = learnItem.id,
             learnWord = learnItem.learnWord,
