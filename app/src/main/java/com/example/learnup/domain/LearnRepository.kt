@@ -4,9 +4,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
 interface LearnRepository {
-    suspend fun getAllLearnItems(): MutableStateFlow<List<ItemLearn>>
+    suspend fun getAllLearnItems(): MutableStateFlow<MutableList<ItemLearn>>
 
     suspend fun getLearnItemById(id:Int):ItemLearn
 
-    fun saveLearnItem(item:ItemLearn)
+    suspend fun saveLearnItem(item:ItemLearn)
+
+    fun saveAppSettings(settings: AppSettings)
+
+    fun getAppSettings():AppSettings
 }

@@ -1,4 +1,4 @@
-package com.example.learnup.presentation
+package com.example.learnup.presentation.fragments
 
 import android.app.Application
 import androidx.lifecycle.ViewModelProvider
@@ -14,7 +14,9 @@ import com.example.learnup.R
 import com.example.learnup.data.LearnRepositoryImpl
 import com.example.learnup.databinding.MainFragmentBinding
 import com.example.learnup.domain.ItemLearn
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.example.learnup.presentation.vmFactories.MainViewModelFactory
+import com.example.learnup.presentation.MyAdapter
+import com.example.learnup.presentation.viewModels.MainViewModel
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -61,7 +63,7 @@ class MainFragment : Fragment() {
                 launchFragment(newFragment)
             }
         }
-        adapter.onLearnItemLongClickListener = object : MyAdapter.OnLearnItemLongClickListener{
+        adapter.onLearnItemLongClickListener = object : MyAdapter.OnLearnItemLongClickListener {
             override fun onLearnItemLongClicked(learnItem: ItemLearn):Boolean {
                 val bun = Bundle()
                 bun.putInt("id", learnItem.id)

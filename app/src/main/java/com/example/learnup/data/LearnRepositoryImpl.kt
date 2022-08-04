@@ -5,45 +5,48 @@ package com.example.learnup.data
 
 import android.app.Application
 import android.util.Log
+import androidx.core.content.edit
 import com.example.learnup.data.api.ApiBuilder
 import com.example.learnup.data.local.AppDataBase
 import com.example.learnup.data.model.LearnItemData
+import com.example.learnup.domain.AppSettings
 import com.example.learnup.domain.ItemLearn
 import com.example.learnup.domain.LearnRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
 
-class LearnRepositoryImpl(application: Application):LearnRepository{
-
-    val dbRoom = AppDataBase.getInstance(application).dao()
-    val db = AppDataBase.getInstance(application).dao()//DataBaseHandler
-    var mutableStateFlow: MutableStateFlow<List<ItemLearn>> = MutableStateFlow(listOf<ItemLearn>(
+class LearnRepositoryImpl(val application: Application):LearnRepository{
+    private val MODE_PRIVATE = 0;
+    private val sharedPrefsName = "changetItemIds"
+    private val SHARED_PREF_SETTINGS = "settings"
+    private val WAY_LEARN = "wayOfLearn"
+    private val FILTERED = "filtered"
+    val db = AppDataBase.getInstance(application).dao()
+    var mutableStateFlow: MutableStateFlow<MutableList<ItemLearn>> = MutableStateFlow(mutableListOf<ItemLearn>(
         ItemLearn()
     ))
+
     val api = ApiBuilder().build()
 
     init {
-//        db = DataBaseHandler(application)
         GlobalScope.launch {
             updateFromApi()
         }
     }
 
-    override suspend fun getAllLearnItems(): MutableStateFlow<List<ItemLearn>> {
-        mutableStateFlow.value = db.getAllLearnItems().map { Mapper().LearnItemToDomain(it) }
-        updateFromApi()
+    override suspend fun getAllLearnItems(): MutableStateFlow<MutableList<ItemLearn>> {
+        mutableStateFlow.value = db.getAllLearnItems().map { Mapper().LearnItemToDomain(it) } as MutableList<ItemLearn>
+//        updateFromApi()
         return mutableStateFlow
         }
 
-    private suspend fun replaceAllInDb(list: List<LearnItemData>){
-        var item = list[0]
-
-        db.deleteAllFromLearnTable()
+    private fun replaceAllInDb(list: List<LearnItemData>){
+//        db.deleteAllFromLearnTable()
         list.forEach {
-            Log.d("test1","shood add item to db with id ${it.id.toString()}")
             db.addLearnItem(it)
         }
+            Log.d("test1","replaced ${list.size} items in db")
     }
 
     suspend fun updateFromApi(){
@@ -51,9 +54,8 @@ class LearnRepositoryImpl(application: Application):LearnRepository{
         try{
             GlobalScope.async {
                 val apiList = api.getAllLines()//ApiStorage().getAllLearnItems()
-//                mutableStateFlow.value = apiList
                 replaceAllInDb(apiList)
-                mutableStateFlow.value = apiList.map { Mapper().LearnItemToDomain(it) }
+                mutableStateFlow.value = apiList.map { Mapper().LearnItemToDomain(it) } as MutableList<ItemLearn>
                 Log.d("test1","updateFromApi started inside async")
             }
 
@@ -63,7 +65,6 @@ class LearnRepositoryImpl(application: Application):LearnRepository{
     }
 
     override suspend fun getLearnItemById(id: Int): ItemLearn {
-        Log.d("test1", "getLearnItemById ${ id.toString() }")
         val item = mutableStateFlow.value.first {
             it.id == id
         }
@@ -71,9 +72,53 @@ class LearnRepositoryImpl(application: Application):LearnRepository{
         return item
     }
 
-    override fun saveLearnItem(item: ItemLearn) {
-        TODO("Not yet implemented")
-        Log.d("test1","will add $item")
+    override suspend fun saveLearnItem(item: ItemLearn) {
+        val learnItemData = Mapper().LearnItemToData(item)
+        val newId = db.addLearnItem(learnItemData).toInt()
+        Log.d("test1","new id must be $newId")
+        val shar = application.getSharedPreferences(sharedPrefsName,MODE_PRIVATE)
+        shar.edit().putInt("id_of_${item.learnWord}", newId).commit()
+        withContext(Dispatchers.IO) {
+        Log.d("test1","before the synhronisation")
+            synhronise()
+            mutableStateFlow.value = db.getAllLearnItems().map { Mapper().LearnItemToDomain(it) } as MutableList<ItemLearn>
+        }
+    }
+
+    override fun saveAppSettings(settings: AppSettings) {
+        val shar = application.getSharedPreferences(SHARED_PREF_SETTINGS,MODE_PRIVATE)
+        shar.edit().putInt(WAY_LEARN, settings.wayOfLearn).commit()
+        shar.edit().putBoolean(FILTERED, settings.wordsFilter).commit()
+    }
+
+    override fun getAppSettings(): AppSettings {
+        val shar = application.getSharedPreferences(SHARED_PREF_SETTINGS,MODE_PRIVATE)
+        val wayOfLearn = shar.getInt(WAY_LEARN, AppSettings.SHOW_ALL)
+        val wordsFilter = shar.getBoolean(FILTERED,false)
+        return AppSettings(wayOfLearn = wayOfLearn, wordsFilter = wordsFilter)
+    }
+
+    suspend fun synhronise(){
+        val shar = application.getSharedPreferences(sharedPrefsName,MODE_PRIVATE)
+        val all = shar.all
+        Log.d("test1","need to synhronise ${all.size} items")
+        all.forEach { (s, any) ->
+            Log.d("test1","will get from db to synhronise item $s with id ${any.toString()}")
+            val item = withContext(Dispatchers.IO){async {
+                try {
+                    db.getLearnItem(any as Int)
+                }catch (e:Exception){
+                    Log.d("test1","cannot synhronise item $s")
+                    null
+                }
+            }.await()}
+            if(item != null){
+                Log.d("test1","will synhronise ${item?.learnWord} with id ${item.id}")
+                api.saveLearnItem(item)
+            }
+            //TODO check if item saved on server, and after delete if from shared preference
+        }
+        shar.edit().clear().commit()//when check save on server will be implemented, delete this line
     }
 
     companion object{
@@ -85,6 +130,8 @@ class LearnRepositoryImpl(application: Application):LearnRepository{
             }
             return mInstance!!
         }
+
+
     }
 }
 

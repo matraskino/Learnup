@@ -11,7 +11,7 @@ interface Dao {
     fun getAllLearnItems(): List<LearnItemData>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addLearnItem(item:LearnItemData)
+    fun addLearnItem(item:LearnItemData):Long
 
     @Query("DELETE FROM LearnItemsTable WHERE id=:id")
     fun deletLearnItem(id:Int)

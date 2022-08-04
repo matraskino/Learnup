@@ -7,6 +7,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import com.example.learnup.databinding.ItemViewBinding
 import com.example.learnup.domain.ItemLearn
+import com.example.learnup.presentation.viewModels.MainViewModel
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -14,7 +15,7 @@ import kotlinx.coroutines.launch
 
 class MyAdapter(private var vm: MainViewModel, private val owner:LifecycleOwner): RecyclerView.Adapter<MyAdapter.UserViewHolder>(), View.OnClickListener {
 
-        var dataToRecycl = vm.dataToRecyclStateFlow.value////dataToRecycl.value!!
+    var dataToRecycl = vm.dataToRecyclStateFlow.value////dataToRecycl.value!!
     var onLearnItemClickListener:OnLearnItemClickListener? = null
     var onLearnItemLongClickListener:OnLearnItemLongClickListener? = null
 
@@ -46,7 +47,6 @@ class MyAdapter(private var vm: MainViewModel, private val owner:LifecycleOwner)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
         val itemBinding = ItemViewBinding.inflate(LayoutInflater.from(parent.context),parent,false)
-
         return UserViewHolder(itemBinding)
 
     }
@@ -62,11 +62,7 @@ class MyAdapter(private var vm: MainViewModel, private val owner:LifecycleOwner)
 
         holder.itemView.setOnLongClickListener {
             onLearnItemLongClickListener?.onLearnItemLongClicked(currentItemLearn) ?: false
-
         }
-
-
-
 
     }
 
@@ -75,10 +71,11 @@ class MyAdapter(private var vm: MainViewModel, private val owner:LifecycleOwner)
     }
 
     override fun onClick(p0: View?) {
+
         TODO("Not yet implemented")
     }
 
-    fun updateList(list:List<ItemLearn>){
+    fun updateList(list:MutableList<ItemLearn>){
 
         dataToRecycl = list
         notifyDataSetChanged()

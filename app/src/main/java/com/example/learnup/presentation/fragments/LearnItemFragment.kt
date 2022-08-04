@@ -1,4 +1,4 @@
-package com.example.learnup.presentation
+package com.example.learnup.presentation.fragments
 
 import android.os.Bundle
 import android.util.Log
@@ -7,11 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.learnup.databinding.ItemFullFragmentBinding
+import com.example.learnup.presentation.vmFactories.LearnItemVMFactory
+import com.example.learnup.presentation.viewModels.LearnItemViewModel
 
 class LearnItemFragment:Fragment() {
 
         lateinit var binding:ItemFullFragmentBinding
-        lateinit var vm:LearnItemViewModel
+        lateinit var vm: LearnItemViewModel
     init {
     }
 

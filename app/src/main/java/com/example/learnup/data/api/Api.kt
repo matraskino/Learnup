@@ -1,9 +1,7 @@
 package com.example.learnup.data.api
 
-import com.example.learnup.data.model.LearnItemApi
 import com.example.learnup.data.model.LearnItemData
 import com.squareup.moshi.Moshi
-import kotlinx.coroutines.runBlocking
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -16,10 +14,10 @@ import java.util.concurrent.TimeUnit
 
 interface Api {
     @POST("exec?action=saveLearnItem")
-    suspend fun saveLearnItem(@Body body: LearnItemApi):String
+    suspend fun saveLearnItem(@Body body: LearnItemData)
 
     @GET("exec?action=getAllLines")
-    suspend fun getAllLines():List<LearnItemData>
+    suspend fun getAllLines():MutableList<LearnItemData>
 
 }
 

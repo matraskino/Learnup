@@ -4,11 +4,14 @@ import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import com.example.learnup.R
+import com.example.learnup.data.LearnRepositoryImpl
+import com.example.learnup.presentation.fragments.MainFragment
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 
 class MainActivity : AppCompatActivity() {
@@ -19,10 +22,6 @@ class MainActivity : AppCompatActivity() {
             val policy = ThreadPolicy.Builder().permitAll().build()
             StrictMode.setThreadPolicy(policy)
         }
-        runBlocking {
-        //main()
-
-        }
         setContentView(R.layout.main_activity)
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
@@ -30,13 +29,16 @@ class MainActivity : AppCompatActivity() {
                 .commitNow()
         }
     }
-    companion object{
-        private fun launchFragment(fragment: Fragment,fragmentManager: FragmentManager) {
-            fragmentManager.popBackStack()
-            fragmentManager.beginTransaction()
-                .replace(R.id.container, fragment)
-                .addToBackStack(null)
-                .commit()
+
+
+    //will delete synhronisation laiter, when implement it on service or otherwise
+    override fun onPause() {
+        val repository = LearnRepositoryImpl.getInstance(this.application)
+        runBlocking {
+            withContext(Dispatchers.IO){
+                repository.synhronise()
+            }
         }
+        super.onPause()
     }
 }

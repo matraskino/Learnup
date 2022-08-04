@@ -1,4 +1,4 @@
-package com.example.learnup.presentation
+package com.example.learnup.presentation.viewModels
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
@@ -17,8 +17,8 @@ class MainViewModel(
     private val getLearnItemByIdUseCase: GetLearnItemByIdUseCase
 ) : ViewModel() {
 
-    var dataToRecycl = MutableLiveData<List<ItemLearn>>()
-    var dataToRecyclStateFlow = MutableStateFlow(listOf(ItemLearn()))
+    var dataToRecycl = MutableLiveData<MutableList<ItemLearn>>()
+    var dataToRecyclStateFlow = MutableStateFlow(mutableListOf(ItemLearn()))
 
     init {
         testFillLiveData()
