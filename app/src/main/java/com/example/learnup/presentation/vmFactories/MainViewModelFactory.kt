@@ -7,6 +7,7 @@ import com.example.learnup.data.LearnRepositoryImpl
 import com.example.learnup.domain.AppSettingsHolder
 import com.example.learnup.domain.GetAllLearnItemsUseCase
 import com.example.learnup.domain.GetLearnItemByIdUseCase
+import com.example.learnup.domain.SaveLearnItemUseCase
 import com.example.learnup.presentation.viewModels.MainViewModel
 
 class MainViewModelFactory(application: Application):ViewModelProvider.Factory {
@@ -14,7 +15,6 @@ class MainViewModelFactory(application: Application):ViewModelProvider.Factory {
 
     private val repository = LearnRepositoryImpl.getInstance(application)
     private val getAllLearnItemsUseCase  by lazy(LazyThreadSafetyMode.NONE) {
-
         GetAllLearnItemsUseCase(repository)
     }
 
@@ -24,9 +24,12 @@ class MainViewModelFactory(application: Application):ViewModelProvider.Factory {
     private val appSettingsHolder  by lazy(LazyThreadSafetyMode.NONE) {
         AppSettingsHolder(repository)
     }
+    private val saveLearnItemUseCase  by lazy(LazyThreadSafetyMode.NONE) {
+        SaveLearnItemUseCase(repository)
+    }
 
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return MainViewModel(getAllLearnItemsUseCase,getLearnItemByIdUseCase,appSettingsHolder) as T
+        return MainViewModel(getAllLearnItemsUseCase,getLearnItemByIdUseCase,appSettingsHolder,saveLearnItemUseCase) as T
     }
 }

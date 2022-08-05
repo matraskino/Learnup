@@ -11,6 +11,8 @@ interface LearnRepository {
 
     suspend fun saveLearnItem(item: ItemLearn)
 
+    suspend fun deleteLearnItem(id: Int)
+
     fun saveAppSettings(settings: AppSettings)
 
     fun getAppSettings(): MutableStateFlow<AppSettings>

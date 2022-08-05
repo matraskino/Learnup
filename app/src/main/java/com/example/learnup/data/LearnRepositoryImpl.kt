@@ -80,9 +80,14 @@ class LearnRepositoryImpl(val application: Application):LearnRepository{
         shar.edit().putInt("id_of_${item.learnWord}", newId).commit()
         withContext(Dispatchers.IO) {
         Log.d("test1","before the synhronisation")
-            synhronise()
             mutableStateFlow.value = db.getAllLearnItems().map { Mapper().LearnItemToDomain(it) } as MutableList<ItemLearn>
+            synhronise()
         }
+    }
+
+    override suspend fun deleteLearnItem(id: Int) {
+        db.deletLearnItem(id)
+        api.saveLearnItem(LearnItemData(id,"","",false,"",""))
     }
 
     override fun saveAppSettings(settings: AppSettings) {

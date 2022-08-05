@@ -9,6 +9,7 @@ import com.example.learnup.R
 import com.example.learnup.domain.AppSettingsHolder
 import com.example.learnup.domain.GetAllLearnItemsUseCase
 import com.example.learnup.domain.GetLearnItemByIdUseCase
+import com.example.learnup.domain.SaveLearnItemUseCase
 import com.example.learnup.domain.models.AppSettings
 import com.example.learnup.domain.models.ItemLearn
 import kotlinx.coroutines.*
@@ -19,7 +20,8 @@ class MainViewModel(
 
     private val getAllLearnItemsUseCase: GetAllLearnItemsUseCase,
     private val getLearnItemByIdUseCase: GetLearnItemByIdUseCase,
-    private val appSettingsHolder: AppSettingsHolder
+    private val appSettingsHolder: AppSettingsHolder,
+    private val saveLearnItemUseCase : SaveLearnItemUseCase
 
 ) : ViewModel() {
 
@@ -79,6 +81,15 @@ class MainViewModel(
             it.filter { it.isChecked } as MutableList
         } else{ it }
         dataToRecycl.postValue(value)
+    }
+
+    fun changeItemChack(itemLearn: ItemLearn, status:Boolean,position:Int){
+        val updatedItem = ItemLearn(itemLearn.id,itemLearn.learnWord,itemLearn.description,status,itemLearn.link,itemLearn.extraDescription)
+        dataToRecyclStateFlow.value.add(position,updatedItem)
+        viewModelScope.launch(Dispatchers.IO) {
+            saveLearnItemUseCase.execute(updatedItem)
+        }
+
     }
 
 //    fun onSettingsChanged(item: MenuItem){

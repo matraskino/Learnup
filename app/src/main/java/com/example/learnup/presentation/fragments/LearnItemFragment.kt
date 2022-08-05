@@ -63,6 +63,10 @@ class LearnItemFragment:Fragment() {
             launchFragment(EditLearnItemFragment.getFragmentInstance(bun))
         }
 
+        binding.btnDelete.setOnClickListener{
+            vm.deleteCurrentItem()
+        }
+
         vm.viewModelScope.launch {
             vm.settings.collectLatest {
                 applySettings()
@@ -93,7 +97,7 @@ class LearnItemFragment:Fragment() {
         }
         var description = when (vm.settings.value.wayOfLearn){
             AppSettings.SHOW_DESCRIPTION -> it.learnWord
-            else -> it.learnWord
+            else -> it.description
         }
         binding.tvExtraDescription.text = it.extraDescription
         binding.tvLearnWord.text = word

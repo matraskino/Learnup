@@ -1,8 +1,10 @@
 package com.example.learnup.presentation
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.RecyclerView
@@ -56,8 +58,9 @@ class MyAdapter(private var vm: MainViewModel, private val owner:LifecycleOwner)
         }
         var description = when (settings.value.wayOfLearn){
             AppSettings.SHOW_DESCRIPTION -> currentItemLearn.learnWord
-            else -> currentItemLearn.learnWord
+            else -> currentItemLearn.description
         }
+        Log.d("test1", "onBindViewHolder ${currentItemLearn.learnWord}")
         holder.itemBinding.firstText.text = word
         holder.itemBinding.defenitionTextView.text = description
         holder.itemBinding.showDef.isChecked = currentItemLearn.isChecked
@@ -70,10 +73,27 @@ class MyAdapter(private var vm: MainViewModel, private val owner:LifecycleOwner)
         }
 
         holder.itemView.setOnLongClickListener {
-            false
+            val defenition = holder.itemBinding.defenitionTextView
+            when(defenition.isVisible){
+                true ->defenition.visibility = View.INVISIBLE
+                else ->defenition.visibility = View.VISIBLE
+            }
+            true
 //            onLearnItemLongClickListener?.onLearnItemLongClicked(currentItemLearn) ?: false
         }
 
+        holder.itemBinding.showDef.setOnClickListener {
+            val chacked = holder.itemBinding.showDef.isChecked
+            Log.d("test1","need to update position ${currentItemLearn.learnWord} with tag $chacked")
+            vm.changeItemChack(currentItemLearn,chacked,position)
+        }
+
+//        holder.itemBinding.showDef.setOnCheckedChangeListener { compoundButton, b ->
+//
+//            vm.changeItemChack(currentItemLearn,b,position)
+//
+//            Log.d("test1","need to update position ${currentItemLearn.learnWord} with chaked $b")
+//        }
     }
 
     override fun getItemCount(): Int {

@@ -4,10 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.learnup.domain.AppSettingsHolder
-import com.example.learnup.domain.GetAllLearnItemsUseCase
-import com.example.learnup.domain.GetLearnItemByIdUseCase
-import com.example.learnup.domain.GetLearnItemIdUseCase
+import com.example.learnup.domain.*
 import com.example.learnup.domain.models.ItemLearn
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,7 +14,8 @@ class LearnItemViewModel(
     private val getAllLearnItemsUseCase:GetAllLearnItemsUseCase,
     private val getLearnItemByIdUseCase:GetLearnItemByIdUseCase,
     private val getLearnItemIdUseCase:GetLearnItemIdUseCase,
-    private val appSettingsHolder: AppSettingsHolder
+    private val appSettingsHolder: AppSettingsHolder,
+    private val deleteLearnItemByIdUseCase:DeleteLearnItemByIdUseCase
     ):ViewModel() {
     private val _itemView = MutableLiveData<ItemLearn>()
     var prevId:MutableList<Int> = mutableListOf()
@@ -37,15 +35,22 @@ class LearnItemViewModel(
     }
     fun nextItem(){
         val currentId = _itemView.value!!.id
-        val nextId = getLearnItemIdUseCase.getNextLearnItem(currentId,false,true)
+        val nextId = getLearnItemIdUseCase.getNextLearnItem(currentId,settings.value.wordsFilter,true)
 //        prevId.add(currentId)
         getLearnItem(nextId)
     }
 
     fun prevItem(){
-
-        var id = getLearnItemIdUseCase.getPreviosLearnItem(_itemView.value!!.id,false,true)
+        var id = getLearnItemIdUseCase.getPreviosLearnItem(_itemView.value!!.id,settings.value.wordsFilter,true)
         getLearnItem(id)
+    }
+
+    fun deleteCurrentItem(){
+        viewModelScope.launch(Dispatchers.IO) {
+            deleteLearnItemByIdUseCase.execute(itemView.value!!.id)
+            getLearnItemIdUseCase.prevId.remove(itemView.value!!.id)
+            nextItem()
+        }
     }
 
 }
