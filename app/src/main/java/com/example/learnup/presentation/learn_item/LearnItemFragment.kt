@@ -1,4 +1,4 @@
-package com.example.learnup.presentation
+package com.example.learnup.presentation.learn_item
 
 import android.os.Bundle
 import android.util.Log
@@ -6,14 +6,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import com.example.learnup.databinding.EditLearnItemBinding
 import com.example.learnup.databinding.ItemFullFragmentBinding
+import com.example.learnup.presentation.edit_learn.EditLearnItemViewModel
+import com.example.learnup.presentation.utils.BaseFragment
+import dagger.hilt.android.AndroidEntryPoint
 
-class LearnItemFragment:Fragment() {
+@AndroidEntryPoint
+class LearnItemFragment:  BaseFragment<ItemFullFragmentBinding>() {
+    private val vm: LearnItemViewModel by activityViewModels()
 
-        lateinit var binding:ItemFullFragmentBinding
-        lateinit var vm:LearnItemViewModel
-    init {
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -21,14 +24,10 @@ class LearnItemFragment:Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        vm = LearnItemVMFactory(requireActivity().application).create(LearnItemViewModel::class.java)
-
         vm.itemView.observe(viewLifecycleOwner){
             binding.tvDescription.text = it.description
         }
         vm.getLearnItem(requireArguments().getInt("id"))
-        binding = ItemFullFragmentBinding.inflate(inflater,container,false)
-
 
 //        binding.tvDescription.text = requireArguments().getString("definition","there are no valye")
 //        binding.tvLearnWord.text = requireArguments().getString("learnWord","there are no valye")
@@ -60,7 +59,7 @@ class LearnItemFragment:Fragment() {
 
 
     companion object{
-        fun getFragmentInstance(args:Bundle):Fragment{
+        fun getFragmentInstance(args:Bundle): Fragment {
             val fragment = LearnItemFragment()
             fragment.arguments = args
             return fragment

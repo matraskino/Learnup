@@ -1,57 +1,27 @@
 package com.example.learnup.presentation
 
-import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.example.learnup.domain.GetAllLearnItemsUseCase
-import com.example.learnup.domain.GetLearnItemByIdUseCase
-import com.example.learnup.domain.ItemLearn
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import com.example.learnup.domain.usecaseImpl.GetAllLearnItemsUseCaseImpl
+import com.example.learnup.network.data.LearnItemDataClass
+import com.example.learnup.presentation.utils.BaseViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@HiltViewModel
+class MainViewModel @Inject constructor(
+    private val getAllLearnItemsUseCaseImpl: GetAllLearnItemsUseCaseImpl,
+) : BaseViewModel() {
 
-class MainViewModel(
+    private val _allInfoData = MutableLiveData<List<LearnItemDataClass>?>()
+    val allInfoData: LiveData<List<LearnItemDataClass>?>
+        get() = _allInfoData
 
-    private val getAllLearnItemsUseCase: GetAllLearnItemsUseCase,
-    private val getLearnItemByIdUseCase: GetLearnItemByIdUseCase
-) : ViewModel() {
-
-    var dataToRecycl = MutableLiveData<List<ItemLearn>>()
-    var dataToRecyclStateFlow = MutableStateFlow(listOf(ItemLearn()))
-
-    init {
-        testFillLiveData()
-    }
-
-    fun fillArr() {
-        viewModelScope.launch {
-
-            dataToRecyclStateFlow =
-                withContext(Dispatchers.IO) {
-                    getAllLearnItemsUseCase.execute()
-                }
-
-
-            dataToRecyclStateFlow.collectLatest {
-                withContext(Dispatchers.Main) {
-                    dataToRecycl.postValue(it)
-                }
-            }
+    fun getAllListInfo() {
+        scope.launch {
+            _allInfoData.postValue(getAllLearnItemsUseCaseImpl.getAll())
         }
     }
 
-    fun testFillLiveData() {
-        dataToRecycl.value = mutableListOf(
-            ItemLearn(
-                1,
-                "test",
-                "test2",
-                false,
-                "google.com.ua",
-                "extra description about nothing"
-            ),
-            ItemLearn(1, "test", "test2", false, "google.com", "test additional decrtiption")
-        )
-    }
 }

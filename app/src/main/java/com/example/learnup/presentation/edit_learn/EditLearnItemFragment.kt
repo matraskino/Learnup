@@ -1,27 +1,28 @@
-package com.example.learnup.presentation
+package com.example.learnup.presentation.edit_learn
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.get
+import androidx.fragment.app.activityViewModels
 import com.example.learnup.databinding.EditLearnItemBinding
-import com.example.learnup.databinding.ItemFullFragmentBinding
+import com.example.learnup.presentation.utils.BaseFragment
+import dagger.hilt.android.AndroidEntryPoint
 
-class EditLearnItemFragment:Fragment() {
-    lateinit var binding:EditLearnItemBinding
-    lateinit var vm:EditLearnItemViewModel
+@AndroidEntryPoint
+class EditLearnItemFragment: BaseFragment<EditLearnItemBinding>() {
+    private val vm: EditLearnItemViewModel by activityViewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        vm = EditLearnItemVMFactory(requireActivity().application).create(EditLearnItemViewModel::class.java)
+
         var id = requireArguments().getInt("id")
         if(id !=0 ){ vm.getLearnItem(id) }
-        binding = EditLearnItemBinding.inflate(inflater,container,false)
+
         binding.testTextView.text = vm.itemView.value?.learnWord
         binding.etLearnWord.setText(vm.itemView.value?.learnWord)
 

@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/38093/AndroidStudioProjects/Learnup/app/src/main/res/layout/item_view.xml" value="0.25364583333333335" />
+        <entry key="..\:/Users/38093/AndroidStudioProjects/Learnup/app/src/main/res/layout/main_fragment.xml" value="0.13768115942028986" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.335" />
         <entry key="app/src/main/res/layout/edit_learn_item.xml" value="0.29554138183593753" />
         <entry key="app/src/main/res/layout/item_full_fragment.xml" value="0.23854166666666668" />
@@ -13,7 +15,7 @@
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">
