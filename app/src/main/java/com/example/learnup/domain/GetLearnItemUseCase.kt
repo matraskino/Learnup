@@ -1,7 +1,6 @@
 package com.example.learnup.domain
 
 
-import com.example.learnup.domain.models.AppSettings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -15,13 +14,19 @@ class GetLearnItemIdUseCase(private val learnRepository: LearnRepository) {
     val allItemsMutableStateFlow = runBlocking {  withContext(Dispatchers.IO){ learnRepository.getAllLearnItems() }}
 
 
-    fun getNextLearnItem(currentId:Int, checked:Boolean, random:Boolean):Int{
+    fun getNextLearnItem(currentId:Int, checked2:Boolean, random2:Boolean):Int{
+        val settings = learnRepository.getAppSettings().value
+        val checked = settings.wordsFilter
+        val random = settings.random
         val derection:Int = if(random){RANDOM}else{NEXT}
         prevId.add(currentId)
         return getLearnItem(currentId,checked, derection)
     }
 
-    fun getPreviosLearnItem(currentId:Int, checked:Boolean, random:Boolean):Int{
+    fun getPreviosLearnItem(currentId:Int, checked1:Boolean, random1:Boolean):Int{
+        val settings = learnRepository.getAppSettings().value
+        val checked = settings.wordsFilter
+        val random = settings.random
         var id = DEFAULT_ID
         val derection:Int = if(random){RANDOM}else{PREVIOS}
         if(prevId.size == 0){

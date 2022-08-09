@@ -21,6 +21,7 @@ class LearnRepositoryImpl(val application: Application):LearnRepository{
     private val SHARED_PREF_SETTINGS = "settings"
     private val WAY_LEARN = "wayOfLearn"
     private val FILTERED = "filtered"
+    private val RANDOM = "random"
     val db = AppDataBase.getInstance(application).dao()
     var mutableStateFlow: MutableStateFlow<MutableList<ItemLearn>> = MutableStateFlow(mutableListOf<ItemLearn>(
         ItemLearn()
@@ -87,13 +88,14 @@ class LearnRepositoryImpl(val application: Application):LearnRepository{
 
     override suspend fun deleteLearnItem(id: Int) {
         db.deletLearnItem(id)
-        api.saveLearnItem(LearnItemData(id,"","",false,"",""))
+        api.saveLearnItem(LearnItemData(id,"","",false,"","",""))
     }
 
     override fun saveAppSettings(settings: AppSettings) {
         val shar = application.getSharedPreferences(SHARED_PREF_SETTINGS,MODE_PRIVATE)
         shar.edit().putInt(WAY_LEARN, settings.wayOfLearn).commit()
         shar.edit().putBoolean(FILTERED, settings.wordsFilter).commit()
+        shar.edit().putBoolean(RANDOM, settings.random).commit()
         Log.d("test1", "saveAppSettings")
         settingsStateFlow.value = settings
     }
@@ -104,7 +106,8 @@ class LearnRepositoryImpl(val application: Application):LearnRepository{
         val shar = application.getSharedPreferences(SHARED_PREF_SETTINGS,MODE_PRIVATE)
         val wayOfLearn = shar.getInt(WAY_LEARN, AppSettings.SHOW_ALL)
         val wordsFilter = shar.getBoolean(FILTERED,true)
-        return AppSettings(wayOfLearn = wayOfLearn, wordsFilter = wordsFilter)
+        val random = shar.getBoolean(RANDOM,false)
+        return AppSettings(wayOfLearn = wayOfLearn, wordsFilter = wordsFilter, random = random)
     }
 
     override fun getAppSettings(): MutableStateFlow<AppSettings> {
@@ -128,6 +131,8 @@ class LearnRepositoryImpl(val application: Application):LearnRepository{
             }.await()}
             if(item != null){
                 Log.d("test1","will synhronise ${item?.learnWord} with id ${item.id}")
+
+                //todo change dispatcher for api request
                 api.saveLearnItem(item)
             }
             //TODO check if item saved on server, and after delete if from shared preference

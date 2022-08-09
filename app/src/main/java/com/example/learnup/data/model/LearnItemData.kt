@@ -11,5 +11,6 @@ data class LearnItemData(
     val description:String,
     val isChecked:Boolean,
     val link:String,
-    val extraDescription:String
+    val extraDescription:String,
+    val topic:String
 )

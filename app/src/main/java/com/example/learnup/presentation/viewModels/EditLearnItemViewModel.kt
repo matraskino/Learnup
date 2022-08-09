@@ -31,10 +31,10 @@ class EditLearnItemViewModel(
     }
     fun saveLearnItem(learnWord:String,description:String,link:String, extraDescription:String){
         val learnItem = ItemLearn(learnWord = learnWord, description = description, link = link, extraDescription = extraDescription)
-        val coroutineExceptionHandler = CoroutineExceptionHandler{_, throwable ->
-            throwable.printStackTrace()
-        }
-        viewModelScope.launch(Dispatchers.Default + coroutineExceptionHandler) {
+//        val coroutineExceptionHandler = CoroutineExceptionHandler{_, throwable ->
+//            throwable.printStackTrace()
+//        }
+        viewModelScope.launch(Dispatchers.Default /*+ coroutineExceptionHandler*/) {
             Log.d("test1","lanch from saveLoarnItem in EditLearItemViewModel")
             saveLearnItemUseCase.execute(learnItem)
 

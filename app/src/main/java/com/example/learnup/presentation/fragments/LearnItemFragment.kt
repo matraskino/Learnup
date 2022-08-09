@@ -30,19 +30,12 @@ class LearnItemFragment:Fragment() {
     ): View? {
 
         vm = LearnItemVMFactory(requireActivity().application).create(LearnItemViewModel::class.java)
-
-        vm.itemView.observe(viewLifecycleOwner){
-            binding.tvDescription.text = it.description
-        }
+//        vm.itemView.observe(viewLifecycleOwner){
+//            binding.tvDescription.text = it.description
+//        }
         vm.getLearnItem(requireArguments().getInt("id"))
         binding = ItemFullFragmentBinding.inflate(inflater,container,false)
-
-
-//        binding.tvDescription.text = requireArguments().getString("definition","there are no valye")
-//        binding.tvLearnWord.text = requireArguments().getString("learnWord","there are no valye")
-//        binding.tvExtraDescription.text = requireArguments().getString("extraDescription","there are no valye")
         return binding.root
-//        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

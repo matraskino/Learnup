@@ -11,7 +11,8 @@ class Mapper {
             description = learnItem.description,
             isChecked = learnItem.isChecked,
             link = learnItem.link,
-            extraDescription = learnItem.extraDescription
+            extraDescription = learnItem.extraDescription,
+            topic = learnItem.topic
 
         )
     }
@@ -23,7 +24,8 @@ class Mapper {
             description = learnItem.description,
             isChecked = learnItem.isChecked,
             link = learnItem.link,
-            extraDescription = learnItem.extraDescription
+            extraDescription = learnItem.extraDescription,
+            topic = learnItem.topic
 
         )
     }

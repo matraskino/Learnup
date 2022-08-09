@@ -5,14 +5,13 @@ import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.forEach
 import com.example.learnup.R
 import com.example.learnup.data.LearnRepositoryImpl
 import com.example.learnup.domain.AppSettingsHolder
-import com.example.learnup.domain.GetLearnItemByIdUseCase
 import com.example.learnup.domain.models.AppSettings
 import com.example.learnup.presentation.fragments.MainFragment
 import kotlinx.coroutines.Dispatchers
@@ -45,16 +44,42 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
+        val menuLayout = R.menu.menu_main
+        val currentSettings = appSettingsHolder.getAppSettings().value
+
+            menuInflater.inflate(R.menu.menu_main, menu)
+
+        menu.forEach {
+            when (it.itemId) {
+                R.id.setting_checked_only -> {
+                    it.isChecked = currentSettings.wordsFilter
+                }
+
+                R.id.setting_random -> {
+                    it.isChecked = currentSettings.random
+                }
+                R.id.setting_learn_mod -> {
+                    it.isChecked = currentSettings.wayOfLearn != AppSettings.SHOW_ALL
+                }
+                }
+
+            }
+
+
         return true
     }
 
+    fun fillCurrentSettingsToMenu(){
+
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        //todo Refactor function. Not to request current settings and save only one settings(not rewrite all)
         val currentSettings = appSettingsHolder.getAppSettings().value
         val replaceLearnMod = when (currentSettings.wayOfLearn){
             AppSettings.SHOW_WORD -> AppSettings.SHOW_DESCRIPTION
             AppSettings.SHOW_DESCRIPTION -> AppSettings.SHOW_WORD
-            else -> AppSettings.SHOW_WORD
+            else -> AppSettings.SHOW_ALL
         }
         val getNextLearnMod = when (currentSettings.wayOfLearn){
             AppSettings.SHOW_WORD -> AppSettings.SHOW_ALL
@@ -64,13 +89,20 @@ class MainActivity : AppCompatActivity() {
 
          when (item.itemId) {
             R.id.setting_replace -> {
-                appSettingsHolder.saveAppSettings(AppSettings(replaceLearnMod,currentSettings.wordsFilter))
+                appSettingsHolder.saveAppSettings(AppSettings(replaceLearnMod,currentSettings.wordsFilter,currentSettings.random))
             }
-             R.id.setting_show_all -> {
-                 appSettingsHolder.saveAppSettings(AppSettings(currentSettings.wayOfLearn,!currentSettings.wordsFilter))
+             R.id.setting_checked_only -> {
+                 appSettingsHolder.saveAppSettings(AppSettings(currentSettings.wayOfLearn,!currentSettings.wordsFilter,currentSettings.random))
+                 item.isChecked =!item.isChecked
              }
              R.id.setting_learn_mod -> {
-                 appSettingsHolder.saveAppSettings(AppSettings(getNextLearnMod,currentSettings.wordsFilter))
+                 appSettingsHolder.saveAppSettings(AppSettings(getNextLearnMod,currentSettings.wordsFilter,currentSettings.random))
+                 item.isChecked =!item.isChecked
+             }
+             R.id.setting_random -> {
+                 val newSetting = !currentSettings.random
+                 appSettingsHolder.saveAppSettings(AppSettings(currentSettings.wayOfLearn,currentSettings.wordsFilter,!currentSettings.random))
+                 item.isChecked =!item.isChecked
              }
             else -> {}
         }
