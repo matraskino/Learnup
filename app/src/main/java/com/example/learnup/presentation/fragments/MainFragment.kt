@@ -9,20 +9,25 @@ import androidx.fragment.app.Fragment
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.learnup.R
-import com.example.learnup.data.LearnRepositoryImpl
+import com.example.learnup.data.repositories.LearnRepositoryImpl
 import com.example.learnup.databinding.MainFragmentBinding
-import com.example.learnup.domain.models.AppSettings
+import com.example.learnup.di.AppModule
+import com.example.learnup.di.DaggerApplicationComponent
 import com.example.learnup.domain.models.ItemLearn
+import com.example.learnup.presentation.App
 import com.example.learnup.presentation.vmFactories.MainViewModelFactory
 import com.example.learnup.presentation.MyAdapter
 import com.example.learnup.presentation.viewModels.MainViewModel
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import javax.inject.Inject
+
 
 class MainFragment : Fragment() {
 
     lateinit var binding: MainFragmentBinding
-    private lateinit var vm: MainViewModel
+
+    lateinit var vm: MainViewModel
     private lateinit var application:Application
 
     companion object {
@@ -33,16 +38,25 @@ class MainFragment : Fragment() {
     lateinit var adapter: MyAdapter
 
 
+    @Inject
+    lateinit var mainViewModelFactory: MainViewModelFactory
+
+
     override fun onCreateView(
+
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
+
         application = requireActivity().application
+        (application as App).applicationComponent.inject(this)
 
         vm = ViewModelProvider(
             this,
-            MainViewModelFactory(application)
+            mainViewModelFactory
         ).get(MainViewModel::class.java)
+
         observeAllWords()
         binding = MainFragmentBinding.inflate(inflater)
         val recView = binding.recyclerView
@@ -111,17 +125,4 @@ class MainFragment : Fragment() {
             adapter.updateList(it)
         }
     }
-
-//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-//        super.onCreateOptionsMenu(menu, inflater)
-//        inflater.inflate(R.menu.menu_main, menu)
-//    }
-
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        vm.onSettingsChanged(item)
-//        return super.onOptionsItemSelected(item)
-//    }
-
-
-
 }

@@ -1,4 +1,4 @@
-package com.example.learnup.domain
+package com.example.learnup.domain.repositories
 
 import com.example.learnup.domain.models.AppSettings
 import com.example.learnup.domain.models.ItemLearn
@@ -13,7 +13,7 @@ interface LearnRepository {
 
     suspend fun deleteLearnItem(id: Int)
 
-    fun saveAppSettings(settings: AppSettings)
-
-    fun getAppSettings(): MutableStateFlow<AppSettings>
+//    fun saveAppSettings(settings: AppSettings)
+//
+//    fun getAppSettings(): MutableStateFlow<AppSettings>
 }

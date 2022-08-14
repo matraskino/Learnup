@@ -77,14 +77,20 @@
         app:layout_constraintBottom_toTopOf="@+id/save_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/til_link">
+        app:layout_constraintTop_toBottomOf="@+id/til_link"
+        >
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_extra_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Extra description:"
-            android:inputType="text" />
+            android:inputType="textMultiLine"
+            android:lines="2"
+            android:gravity="top|start"
+            android:minLines="2"
+            android:scrollbars="vertical"
+            android:text="hello gor     100 years and i dont know wha as;ldkfj ;lksjdf ;laksjdf; alkds" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button

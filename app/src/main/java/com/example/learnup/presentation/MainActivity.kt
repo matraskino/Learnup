@@ -10,28 +10,39 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.forEach
 import com.example.learnup.R
-import com.example.learnup.data.LearnRepositoryImpl
+import com.example.learnup.data.repositories.LearnRepositoryImpl
+import com.example.learnup.data.model.LearnItemData
+import com.example.learnup.data.repositories.SettingsRepositoryImpl
+import com.example.learnup.di.AppModule
+import com.example.learnup.di.ApplicationComponent
+import com.example.learnup.di.DaggerApplicationComponent
+import com.example.learnup.di.DataModule
 import com.example.learnup.domain.AppSettingsHolder
 import com.example.learnup.domain.models.AppSettings
 import com.example.learnup.presentation.fragments.MainFragment
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
+import javax.inject.Inject
 
 
 class MainActivity : AppCompatActivity() {
 
-    private val appSettingsHolder  by lazy(LazyThreadSafetyMode.NONE) {
-        AppSettingsHolder(LearnRepositoryImpl.getInstance(application))
-    }
+    @Inject
+     lateinit var appSettingsHolder:AppSettingsHolder
+//    private val appSettingsHolder  by lazy(LazyThreadSafetyMode.NONE) {
+//        AppSettingsHolder(SettingsRepositoryImpl.getInstance(application))
+//    }
 
     @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         if (Build.VERSION.SDK_INT > 9) {
             val policy = ThreadPolicy.Builder().permitAll().build()
             StrictMode.setThreadPolicy(policy)
         }
+
+        (application as App).applicationComponent.inject(this)
+
         setContentView(R.layout.main_activity)
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
@@ -103,6 +114,16 @@ class MainActivity : AppCompatActivity() {
                  val newSetting = !currentSettings.random
                  appSettingsHolder.saveAppSettings(AppSettings(currentSettings.wayOfLearn,currentSettings.wordsFilter,!currentSettings.random))
                  item.isChecked =!item.isChecked
+                     val repo = LearnRepositoryImpl.getInstance(this.application)
+                GlobalScope.launch(Dispatchers.IO) {
+
+                     repo.db.addLearnItem(
+                         LearnItemData(
+                             0,"testMainAct","tet",true,"gfd","bgfvdc","fvdc"
+                         )
+                     )
+                }
+
              }
             else -> {}
         }

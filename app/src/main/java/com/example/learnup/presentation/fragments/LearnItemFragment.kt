@@ -30,6 +30,7 @@ class LearnItemFragment:Fragment() {
     ): View? {
 
         vm = LearnItemVMFactory(requireActivity().application).create(LearnItemViewModel::class.java)
+
 //        vm.itemView.observe(viewLifecycleOwner){
 //            binding.tvDescription.text = it.description
 //        }

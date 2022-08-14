@@ -1,21 +1,24 @@
-package com.example.learnup.data
+package com.example.learnup.data.repositories
 
 
 
 
 import android.app.Application
 import android.util.Log
+import com.example.learnup.data.Mapper
 import com.example.learnup.data.api.ApiBuilder
 import com.example.learnup.data.local.AppDataBase
 import com.example.learnup.data.model.LearnItemData
 import com.example.learnup.domain.models.AppSettings
 import com.example.learnup.domain.models.ItemLearn
-import com.example.learnup.domain.LearnRepository
+import com.example.learnup.domain.repositories.LearnRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import okhttp3.internal.notify
+import javax.inject.Inject
 
 
-class LearnRepositoryImpl(val application: Application):LearnRepository{
+class LearnRepositoryImpl @Inject constructor(val application: Application): LearnRepository {
     private val MODE_PRIVATE = 0;
     private val sharedPrefsName = "changetItemIds"
     private val SHARED_PREF_SETTINGS = "settings"
@@ -23,10 +26,11 @@ class LearnRepositoryImpl(val application: Application):LearnRepository{
     private val FILTERED = "filtered"
     private val RANDOM = "random"
     val db = AppDataBase.getInstance(application).dao()
+
     var mutableStateFlow: MutableStateFlow<MutableList<ItemLearn>> = MutableStateFlow(mutableListOf<ItemLearn>(
         ItemLearn()
     ))
-    var settingsStateFlow:MutableStateFlow<AppSettings> = MutableStateFlow(getCurrentSettings())
+//    var settingsStateFlow:MutableStateFlow<AppSettings> = MutableStateFlow(getCurrentSettings())
 
     val api = ApiBuilder().build()
 
@@ -74,6 +78,8 @@ class LearnRepositoryImpl(val application: Application):LearnRepository{
     }
 
     override suspend fun saveLearnItem(item: ItemLearn) {
+
+//VGT
         val learnItemData = Mapper().LearnItemToData(item)
         val newId = db.addLearnItem(learnItemData).toInt()
         Log.d("test1","new id must be $newId")
@@ -91,29 +97,29 @@ class LearnRepositoryImpl(val application: Application):LearnRepository{
         api.saveLearnItem(LearnItemData(id,"","",false,"","",""))
     }
 
-    override fun saveAppSettings(settings: AppSettings) {
-        val shar = application.getSharedPreferences(SHARED_PREF_SETTINGS,MODE_PRIVATE)
-        shar.edit().putInt(WAY_LEARN, settings.wayOfLearn).commit()
-        shar.edit().putBoolean(FILTERED, settings.wordsFilter).commit()
-        shar.edit().putBoolean(RANDOM, settings.random).commit()
-        Log.d("test1", "saveAppSettings")
-        settingsStateFlow.value = settings
-    }
-
-    private fun getCurrentSettings(): AppSettings{
-
-        Log.d("test1", "get new APP SETTINGS")
-        val shar = application.getSharedPreferences(SHARED_PREF_SETTINGS,MODE_PRIVATE)
-        val wayOfLearn = shar.getInt(WAY_LEARN, AppSettings.SHOW_ALL)
-        val wordsFilter = shar.getBoolean(FILTERED,true)
-        val random = shar.getBoolean(RANDOM,false)
-        return AppSettings(wayOfLearn = wayOfLearn, wordsFilter = wordsFilter, random = random)
-    }
-
-    override fun getAppSettings(): MutableStateFlow<AppSettings> {
-        settingsStateFlow.value = getCurrentSettings()
-        return settingsStateFlow
-    }
+//    override fun saveAppSettings(settings: AppSettings) {
+//        val shar = application.getSharedPreferences(SHARED_PREF_SETTINGS,MODE_PRIVATE)
+//        shar.edit().putInt(WAY_LEARN, settings.wayOfLearn).commit()
+//        shar.edit().putBoolean(FILTERED, settings.wordsFilter).commit()
+//        shar.edit().putBoolean(RANDOM, settings.random).commit()
+//        Log.d("test1", "saveAppSettings")
+//        settingsStateFlow.value = settings
+//    }
+//
+//    private fun getCurrentSettings(): AppSettings{
+//
+//        Log.d("test1", "get new APP SETTINGS")
+//        val shar = application.getSharedPreferences(SHARED_PREF_SETTINGS,MODE_PRIVATE)
+//        val wayOfLearn = shar.getInt(WAY_LEARN, AppSettings.SHOW_ALL)
+//        val wordsFilter = shar.getBoolean(FILTERED,true)
+//        val random = shar.getBoolean(RANDOM,false)
+//        return AppSettings(wayOfLearn = wayOfLearn, wordsFilter = wordsFilter, random = random)
+//    }
+//
+//    override fun getAppSettings(): MutableStateFlow<AppSettings> {
+//        settingsStateFlow.value = getCurrentSettings()
+//        return settingsStateFlow
+//    }
 
     suspend fun synhronise(){
         val shar = application.getSharedPreferences(sharedPrefsName,MODE_PRIVATE)
@@ -142,7 +148,7 @@ class LearnRepositoryImpl(val application: Application):LearnRepository{
 
     companion object{
 
-        private var mInstance:LearnRepositoryImpl? = null
+        private var mInstance: LearnRepositoryImpl? = null
         fun getInstance(application: Application): LearnRepositoryImpl {
             if (mInstance == null){
                 mInstance = LearnRepositoryImpl(application)

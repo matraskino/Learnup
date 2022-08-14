@@ -8,6 +8,8 @@ class AppSettings(
 
 
 ){
+
+
     companion object{
         val SHOW_WORD = 1
         val SHOW_DESCRIPTION = 2

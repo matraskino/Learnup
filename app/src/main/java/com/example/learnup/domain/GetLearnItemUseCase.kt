@@ -1,11 +1,15 @@
 package com.example.learnup.domain
 
 
+import com.example.learnup.domain.repositories.LearnRepository
+import com.example.learnup.domain.repositories.SettingsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class GetLearnItemIdUseCase(private val learnRepository: LearnRepository) {
+class GetLearnItemIdUseCase @Inject constructor(private val learnRepository: LearnRepository, private val settingsRepository: SettingsRepository) {
+
     val RANDOM = 0
     val NEXT = 1
     val PREVIOS = 2
@@ -15,7 +19,7 @@ class GetLearnItemIdUseCase(private val learnRepository: LearnRepository) {
 
 
     fun getNextLearnItem(currentId:Int, checked2:Boolean, random2:Boolean):Int{
-        val settings = learnRepository.getAppSettings().value
+        val settings = settingsRepository.getAppSettings().value
         val checked = settings.wordsFilter
         val random = settings.random
         val derection:Int = if(random){RANDOM}else{NEXT}
@@ -24,7 +28,7 @@ class GetLearnItemIdUseCase(private val learnRepository: LearnRepository) {
     }
 
     fun getPreviosLearnItem(currentId:Int, checked1:Boolean, random1:Boolean):Int{
-        val settings = learnRepository.getAppSettings().value
+        val settings = settingsRepository.getAppSettings().value
         val checked = settings.wordsFilter
         val random = settings.random
         var id = DEFAULT_ID

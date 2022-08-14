@@ -3,33 +3,18 @@ package com.example.learnup.presentation.vmFactories
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.learnup.data.LearnRepositoryImpl
+import com.example.learnup.data.repositories.LearnRepositoryImpl
+import com.example.learnup.data.repositories.SettingsRepositoryImpl
 import com.example.learnup.domain.AppSettingsHolder
 import com.example.learnup.domain.GetAllLearnItemsUseCase
 import com.example.learnup.domain.GetLearnItemByIdUseCase
 import com.example.learnup.domain.SaveLearnItemUseCase
 import com.example.learnup.presentation.viewModels.MainViewModel
+import javax.inject.Inject
 
-class MainViewModelFactory(application: Application):ViewModelProvider.Factory {
-
-
-    private val repository = LearnRepositoryImpl.getInstance(application)
-    private val getAllLearnItemsUseCase  by lazy(LazyThreadSafetyMode.NONE) {
-        GetAllLearnItemsUseCase(repository)
-    }
-
-    private val getLearnItemByIdUseCase  by lazy(LazyThreadSafetyMode.NONE) {
-        GetLearnItemByIdUseCase(repository)
-    }
-    private val appSettingsHolder  by lazy(LazyThreadSafetyMode.NONE) {
-        AppSettingsHolder(repository)
-    }
-    private val saveLearnItemUseCase  by lazy(LazyThreadSafetyMode.NONE) {
-        SaveLearnItemUseCase(repository)
-    }
-
+class MainViewModelFactory @Inject constructor(private val application: Application):ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return MainViewModel(getAllLearnItemsUseCase,getLearnItemByIdUseCase,appSettingsHolder,saveLearnItemUseCase) as T
+        return MainViewModel(application) as T
     }
 }

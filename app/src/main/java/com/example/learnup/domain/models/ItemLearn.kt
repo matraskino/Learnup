@@ -4,7 +4,7 @@ data class ItemLearn(
     val id: Int = 0,
     val learnWord: String = "default word",
     val description: String = "defaul description",
-    val isChecked: Boolean = false,
+    val isChecked: Boolean = true,
     val link: String = "www.default.com",
     val extraDescription: String = " default extra data bout dord",
     val topic:String = "other"

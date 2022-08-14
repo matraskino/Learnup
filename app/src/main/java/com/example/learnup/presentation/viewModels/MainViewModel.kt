@@ -1,5 +1,6 @@
 package com.example.learnup.presentation.viewModels
 
+import android.app.Application
 import android.util.Log
 import android.view.MenuItem
 import androidx.lifecycle.MutableLiveData
@@ -12,25 +13,34 @@ import com.example.learnup.domain.GetLearnItemByIdUseCase
 import com.example.learnup.domain.SaveLearnItemUseCase
 import com.example.learnup.domain.models.AppSettings
 import com.example.learnup.domain.models.ItemLearn
+import com.example.learnup.presentation.App
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import javax.inject.Inject
 
 
-class MainViewModel(
-
-    private val getAllLearnItemsUseCase: GetAllLearnItemsUseCase,
-    private val getLearnItemByIdUseCase: GetLearnItemByIdUseCase,
-    private val appSettingsHolder: AppSettingsHolder,
-    private val saveLearnItemUseCase : SaveLearnItemUseCase
-
+class MainViewModel @Inject constructor(
+    application: Application
 ) : ViewModel() {
+
+    @Inject
+    lateinit var getAllLearnItemsUseCase: GetAllLearnItemsUseCase
+    @Inject
+    lateinit var getLearnItemByIdUseCase: GetLearnItemByIdUseCase
+    @Inject
+    lateinit var appSettingsHolder: AppSettingsHolder
+    @Inject
+    lateinit var saveLearnItemUseCase : SaveLearnItemUseCase
+
+    @Inject
+    lateinit var settings:MutableStateFlow<AppSettings>
 
     var dataToRecycl = MutableLiveData<MutableList<ItemLearn>>()
     var dataToRecyclStateFlow = MutableStateFlow(mutableListOf(ItemLearn()))
-    var settings = appSettingsHolder.getAppSettings()
 
     init {
         testFillLiveData()
+        (application as App).applicationComponent.inject(this)
     }
 
     fun fillArr() {
@@ -66,6 +76,7 @@ class MainViewModel(
             ItemLearn(1, "test", "test2", false, "google.com", "test additional decrtiption")
         )
     }
+
     fun observSettings(){
         viewModelScope.launch {
             settings.collectLatest {
@@ -89,35 +100,5 @@ class MainViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             saveLearnItemUseCase.execute(updatedItem)
         }
-
     }
-
-//    fun onSettingsChanged(item: MenuItem){
-//        val replaceLearnMod = when (settings.wayOfLearn){
-//            AppSettings.SHOW_WORD -> AppSettings.SHOW_DESCRIPTION
-//            AppSettings.SHOW_DESCRIPTION -> AppSettings.SHOW_WORD
-//            else -> AppSettings.SHOW_WORD
-//        }
-//        val getNextLearnMod = when (settings.wayOfLearn){
-//            AppSettings.SHOW_WORD -> AppSettings.SHOW_ALL
-//            AppSettings.SHOW_DESCRIPTION -> AppSettings.SHOW_ALL
-//            else -> AppSettings.SHOW_WORD
-//        }
-//
-//        when (item.itemId) {
-//            R.id.setting_replace -> {
-//                appSettingsHolder.saveAppSettings(AppSettings(replaceLearnMod,settings.wordsFilter))
-//            }
-//            R.id.setting_show_all -> {
-//                appSettingsHolder.saveAppSettings(AppSettings(settings.wayOfLearn,!settings.wordsFilter))
-//            }
-//            R.id.setting_learn_mod -> {
-//                appSettingsHolder.saveAppSettings(AppSettings(getNextLearnMod,settings.wordsFilter))
-//            }
-//            else -> {}
-//        }
-//        implementSettings()
-//
-//    }
-
 }

@@ -37,7 +37,7 @@ class EditLearnItemFragment:Fragment() {
             val description = binding.etDescription.text.toString()
             val link = binding.etLink.text.toString()
             val extraDescription = binding.etExtraDescription.text.toString()
-            vm.saveLearnItem(learnWord = learnWord, description = description, link = link, extraDescription = extraDescription)
+            vm.saveLearnItem(id = id, learnWord = learnWord, description = description, link = link, extraDescription = extraDescription)
             requireActivity().onBackPressed()
         }
         super.onViewCreated(view, savedInstanceState)
